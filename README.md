@@ -6,4 +6,7 @@ One of the novel aspects of this methodology is the use of a series of scripts t
 
 ## Generation of XML files (input for running BEAST)
 
-This is mostly based on the script XMLgenerator (https://github.com/VanssyLi/beastXMLgenerator/tree/main) written by co-author Wenxi Li under my supervision as a Masters student.
+This is mostly based on the ```python``` script ```XMLgenerator``` (https://github.com/VanssyLi/beastXMLgenerator/tree/main) that was published along with the paper and written by co-author Wenxi Li under my supervision as a MSc student. 
+
+> [!NOTE]
+> For the methodology described here, the version 1.0 of the ```XMLgenerator``` was used (see script XMLgenerator_v1.py, attached to this repository, also written by Wenxi Li).
