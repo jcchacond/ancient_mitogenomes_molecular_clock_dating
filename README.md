@@ -1,4 +1,4 @@
-# Molecular clock dating with ancient mitogenomes
+# Molecular clock dating using ancient mitogenomes
 
 Methodology for molecular clock dating using ancient mitogenomes published in [Chacón-Duque _et al._, _MBE_ (2025)](https://academic.oup.com/mbe/article/42/4/msaf065/8107989). This repository is complementary to the methodology described in the paper, providing the necessary commands and scripts to reproduce the main analyses.
 
