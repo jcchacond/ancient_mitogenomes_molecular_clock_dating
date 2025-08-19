@@ -39,7 +39,7 @@ fastp -i <sampleID>_R1.fastq.gz -I <sampleID>_R1.fastq.gz \
 
 If your sample was sequenced across several lanes and/or indexed libraries, you can combine all the merged files using ```zcat```.
 
-### iterative "_de novo_" assembly of mitogenomes using ```MIA```
+### Iterative "_de novo_" assembly of mitogenomes using [```MIA```](https://github.com/mpieva/mapping-iterative-assembler/)
 
 For this purpose we used the reference genome of the closest outgroup to mammoths (Asian elephant) as a guide for the iterative assembly process and all the parameters recommended by MIA for ancient DNA data.
 
@@ -48,11 +48,18 @@ mia -r E.maximus_mito_NC_005129.2.fasta -f <sampleID>.trimmed.merged.35bp.fastq 
 -c -C -U -s ancient.submat.txt -i -F -k 14 -m <sampleID>.trimmed.merged.35bp.maln
 ```
 
+Then, to generate a consensus sequence filtering with a consensus and a minimum per-site depth of coverage, we used the [MIA Helper Scripts](https://github.com/aersoares81/mia-helper-scripts).
+
+### multiple sequence alignment (MSA)
+
+We had a set of mitogenomes with unknown ages or infinite radiocarbon estimates that we wanted to date. In order to avoid generating MSAs for every sample, we first aligned all of them together with ```MUSCLE``` and then created the subsets containing each individual sample with unknown age.
+
+## Lifted annotation
+
+We ran ```Liftoff```  
 
 ## template.xml
 
 This template can be created once using ```BEAUti``` (we are also currently working on scripts to generate the template without using the GUI). I attach the template used for this paper's analyses (created with ```BEAUti```), for reproducibility purposes.
 
-- **Multiple Sequence Alignment**
-- **Lifted annotation**
-- **Priors file**
+## Priors file
