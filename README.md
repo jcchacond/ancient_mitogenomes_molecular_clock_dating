@@ -56,10 +56,17 @@ We had a set of mitogenomes with unknown ages or infinite radiocarbon estimates 
 
 ## Lifted annotation
 
-We ran ```Liftoff```  
+We ran ```Liftoff``` to create a new annotation based on the MSA. In other words to lift the coordinates from the reference mitogenome annotation (NC_007596.2.gff3), to the coordinates matching this same genome when included in the multiple alignment (NC_007596.2.MSA.gff3). 
+
+```bash
+liftoff -g NC_007596.2.gff3 -o NC_007596.2.MSA.gff3 \
+-f partition.list.txt target_NC_007596.2.fasta ref_NC_007596.2.fasta
+```
 
 ## template.xml
 
 This template can be created once using ```BEAUti``` (we are also currently working on scripts to generate the template without using the GUI). I attach the template used for this paper's analyses (created with ```BEAUti```), for reproducibility purposes.
 
 ## Priors file
+
+This basically is a plain text file to set up what prior distribution will be used to estimate the tip ages. 
