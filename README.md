@@ -65,6 +65,8 @@ The file "NC_007596.2.gff3" (flag -g) contains the original annotation, the file
 
 Finally, considering the assembly and alignment limitations on the hypervariable control region, the lower and upper limits of the variable number tandem repeat (VNTR) region (positions 16157 to 16476 in the woolly reference mitogenome; NC_007596.2) were located in the MSA and added to the output annotation file in order to mask it for downstream analyses.
 
+I attach the lifted annotation that was produced for the paper ("NC_007596.2.ChaconDuque2025.gff3")
+
 ### FASTA files containing the radiocarbon dated samples and one undated sample (FASTA format)
 
 We created subsets of FASTA files each containing one sample with unknown age. This file basically is a multiple sequence alignment containing all the mitogenomes for samples with known radiocarbon ages (the dating reference dataset) and the mitogenome that needs to be dated invidually (sampleID). For this we used the software ```seqkit``` as indicated below:
@@ -80,9 +82,11 @@ seqkit grep -r -p "sampleID" MSA.fasta > sampleID.aligned.fasta
 cat datedsamples.algined.fasta sampleID.aligned.fasta > sampleID.datingset.aligned.fasta
 ```
 
+Attached to this repository you can find an example file ("ChaconDuque2025.P043.aligned.fasta"), containing the set of radiocarbon dated samples and one undated sample (P043, also known as Chukochya). 
+
 ### template.xml
 
-This template needs to be created only once using ```BEAUti``` (we are also currently working on scripts to generate the template without using the GUI). I attach the template used for this paper's analyses (created with ```BEAUti```), for reproducibility purposes. Basically, XMLgenerator is going to use this as a draft that contains all the structure needed for the XML file.
+This template needs to be created only once using ```BEAUti``` (we are also currently working on scripts to generate the template without using the GUI). I attach the template used for this paper's analyses ("template.xml", created with ```BEAUti```), for reproducibility purposes. Basically, XMLgenerator is going to use this as a draft that contains all the structure needed for the XML file.
 
 ### Priors file
 
@@ -108,7 +112,7 @@ python XMLgenerator_v1.py -f sampleID.datingset.aligned.fasta \
 -m 100000000 -l 100000 -o sampleID.uniform.100M.chain1.xml
 ```
 
-The flags -m and -l indicate the number of iterations (100 million in this case) and burn-in (10%), respectively.
+The flags -m and -l indicate the number of iterations (100 million in this case) and burn-in (10%), respectively. If you want to give it a go, you can use the input files I have attached to this repository.
 
 ## Now, all ready to run ```BEAST```
 
