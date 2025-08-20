@@ -61,11 +61,19 @@ We "lifted" the reference mitogenome annotation to match the MSA (NC_007596.2.MS
 liftoff -g NC_007596.2.gff3 -o NC_007596.2.MSA.gff3 \
 -f partition.list.txt target_NC_007596.2.fasta ref_NC_007596.2.fasta
 ```
-The file "NC_007596.2.gff3" (flag -g) contains the original annotation, the file "ref_NC_007596.2.fasta" contains the original reference mitogenome in FASTA format, and the file "target_NC_007596.2.fasta" contains the same reference genome extracted from the MSA (with all the gaps it might include there). Additionally, we provided a plain text file ("partition.list.txt") that contains the names of the partitions to be included in the BEAST analysis, following the same naming conventions of the GFF3 file.
+The file "NC_007596.2.gff3" (flag -g) contains the original annotation, the file "ref_NC_007596.2.fasta" contains the original reference mitogenome in FASTA format, and the file "target_NC_007596.2.fasta" contains the same reference genome extracted from the MSA (with all the gaps it might include there). Additionally, we provided a plain text file ("partition.list.txt") that contains the names of the partitions to be included in the BEAST analysis, following the same naming conventions of the GFF3 file. This is an example of how the partition.list file looks like:
+
+```
+CDS
+tRNA
+rRNA
+D_loop
+VNTR
+```
 
 Finally, considering the assembly and alignment limitations on the hypervariable control region, the lower and upper limits of the variable number tandem repeat (VNTR) region (positions 16157 to 16476 in the woolly reference mitogenome; NC_007596.2) were located in the MSA and added to the output annotation file in order to mask it for downstream analyses.
 
-I attach the lifted annotation that was produced for the paper ("NC_007596.2.ChaconDuque2025.gff3")
+I attach the lifted annotation that was produced for the paper ("NC_007596.2.ChaconDuque2025.gff3")/
 
 ### FASTA files containing the radiocarbon dated samples and one undated sample (FASTA format)
 
