@@ -48,31 +48,54 @@ Then, we generated consensus sequences with a sequence agreement of 67% and a mi
 As described in our paper, we used the original alignment published by [van der Valk _et al_. _Nature_ (2021)](https://www.nature.com/articles/s41586-021-03224-9) and we removed a few samples. We ["unaligned"](https://github.com/jcchacond/unalignMSA) this MSA and merged it with all the new consensus mitogenomes.
 
 We aligned all of them together with ```MUSCLE``` v3 using default parameters. We visually inspected the MSA using ```SeaView``` to correct any alignment errors.
-Subsequenty we created subsets containing each one sample with unknown age each (see section XXX below)
 
 ## Preparing the input files for the ```XMLgenerator```
 
-### Lifted annotation
+### "Lifted" reference mitogenome annotation (GFF3 format)
 
-We ran ```Liftoff``` to create a new annotation based on the MSA. In other words to lift the coordinates from the reference mitogenome annotation (NC_007596.2.gff3), to the coordinates matching this same genome when included in the multiple alignment (NC_007596.2.MSA.gff3). 
+This is relavant only if you want to use partitions when running your ```BEAST``` analyses.
+
+We "lifted" the reference mitogenome annotation to match the MSA (NC_007596.2.MSA.gff3) using [```Liftoff```](https://github.com/agshumate/Liftoff). In other words, we used the coordinates and features from the reference mitogenome annotation to match these same cooridnates and features to the same reference mitogenome when included in the MSA. We used the woolly mammoth reference mitogenome, to make sure that the lifted coordinates were as accurate as possible. 
 
 ```bash
 liftoff -g NC_007596.2.gff3 -o NC_007596.2.MSA.gff3 \
 -f partition.list.txt target_NC_007596.2.fasta ref_NC_007596.2.fasta
 ```
+The file "NC_007596.2.gff3" (flag -g) contains the original annotation, the file "ref_NC_007596.2.fasta" contains the original reference mitogenome in FASTA format, and the file "target_NC_007596.2.fasta" contains the same reference genome extracted from the MSA (with all the gaps it might include there). Additionally, we provided a plain text file ("partition.list.txt") that contains the names of the partitions to be included in the BEAST analysis, following the same naming conventions of the GFF3 file.
 
-### MSA_sampleID.datingset.aligned.fasta
+Finally, considering the assembly and alignment limitations on the hypervariable control region, the lower and upper limits of the variable number tandem repeat (VNTR) region (positions 16157 to 16476 in the woolly reference mitogenome; NC_007596.2) were located in the MSA and added to the output annotation file in order to mask it for downstream analyses.
 
-This file basically is a multiple sequence alignment containing all the mitogenomes for samples with known radiocarbon ages (the dating reference dataset) and the mitogenome that needs to be dated invidually (sampleID). I attach the alignment for the original samples.
+### FASTA files containing the radiocarbon dated samples and one undated sample (FASTA format)
+
+We created subsets of FASTA files each containing one sample with unknown age. This file basically is a multiple sequence alignment containing all the mitogenomes for samples with known radiocarbon ages (the dating reference dataset) and the mitogenome that needs to be dated invidually (sampleID). For this we used the software ```seqkit``` as indicated below:
+
+```bash
+# Creating a file containing only the radiocarbon dated samples to be used as reference for dating
+seqkit grep -r -p ".*ND" -v aligned.fasta > datedsamples.algined.fasta
+
+# Creating a file that only contains the sample to be dated
+seqkit grep -r -p "sampleID" MSA.fasta > sampleID.aligned.fasta
+
+# Concatenaing the files
+cat datedsamples.algined.fasta sampleID.aligned.fasta > sampleID.datingset.aligned.fasta
+```
 
 ### template.xml
 
-This template can be created once using ```BEAUti``` (we are also currently working on scripts to generate the template without using the GUI). I attach the template used for this paper's analyses (created with ```BEAUti```), for reproducibility purposes.
+This template needs to be created only once using ```BEAUti``` (we are also currently working on scripts to generate the template without using the GUI). I attach the template used for this paper's analyses (created with ```BEAUti```), for reproducibility purposes. Basically, XMLgenerator is going to use this as a draft that contains all the structure needed for the XML file.
 
 ### Priors file
 
-This basically is a plain text file to set up what prior distribution will be used to estimate the tip ages. 
+A plain text comma-separated (csv) file to set up what tip-date prior distribution will be used for each undated sample. This is an example of how the file looks like for one of the samples:
 
+```csv
+taxa,date,prior,mu/lower,sigma/upper,offset
+P043_M.pri_NAS_ND,700000,uniform,1000,2000000,0
+```
+
+Here we wuse a prior age of 700 thousand years with a range between 1 thousand years and 2 million years, with a uniform (flat) distribution and an offset of 0.
+
+You can make only one file containing all your undated samples, the XMLgenerator will search only for the sample that is included in the alignment 
 
 
 ## How to run  the ```XMLgenerator```
@@ -80,10 +103,17 @@ This basically is a plain text file to set up what prior distribution will be us
 This is a basic example of how this script is used for generating the input XML file for single-sample dating:
 
 ```python
-python XMLgenerator_v1.py -f MSA_sampleID.datingset.aligned.fasta \
- -g NC_007596.2.liftoff.gff3 -t template.xml \
--p priors.sampleID.uniform.csv \
--m 100000000 -l 100000 -o sampleID.uniform.chain1.xml
+python XMLgenerator_v1.py -f sampleID.datingset.aligned.fasta \
+ -g NC_007596.2.MSA.gff3 -t template.xml -p priors.csv \
+-m 100000000 -l 100000 -o sampleID.uniform.100M.chain1.xml
 ```
 
+The flags -m and -l indicate the number of iterations (100 million in this case) and burn-in (10%), respectively.
 
+## Now, all ready to run ```BEAST```
+
+This is how I run beast in an HPC environment:
+
+```bash
+beast -beagle_cpu -beagle_sse -beagle_double -threads <ncores> sampleID.uniform.100M.chain1.xml
+```
